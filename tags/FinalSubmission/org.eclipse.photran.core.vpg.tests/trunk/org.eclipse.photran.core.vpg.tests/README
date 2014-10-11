@@ -1,0 +1,34 @@
+MP5 README
+Group Longan: Andrew Kryczka (kryczka2), Brett Mason (mason15), Joe Wrenn (wrenn2)
+
+The metrics plug-in identified the following unsafe areas in the Photran feature:
+
+1. In the classify() method in the org.eclipse.photran.internal.core.lang.linescanner.FortranLineScanner class, the McCabe Cyclomatic Complexity is too high.  This is a measure of the number of possible execution paths in the method, so a higher number suggests the method’s logic is too complicated. To fix this, the extract method refactoring can be used to move some of the control flow logic into other methods. I believe this refactoring is unnecessary because the method’s logic isn’t difficult to understand since it’s not very long and doesn’t have much nesting of control structures.
+
+2. The searchAndLaunch() method in the org.eclipse.photran.cdtinterface.makegen.DefaultFortranDependencyCalculator class has a maximum nested block depth of 12. This metric suggests there is too much nesting of control structures. Again, the extract method refactoring can be applied here to move some of the control structures into separate methods. I believe it is necessary to perform this refactoring since the method is also too long and the control flow is difficult to understand.
+
+3. The customizeDocumentCommand() method in the org.eclipse.photran.internal.ui.editor.TabsToSpacesConverter class has a maximum nested block depth of 6. As mentioned in (2), this metric suggests too much nesting of control structures and the extract method refactoring can reduce this metric. In this case, I do not believe it necessary to perform this refactoring since it is not much higher than the suggested maximum nested block depth of 5, and some of the control structures in this nested block of depth 6 are extremely simple, like try-catch blocks and simple if-else blocks.
+
+Software metrics identify potentially problematic areas in the code, such as the ones described above. However, having good metrics does not indicate correctness of the code, as metrics are unaware of the code’s purpose/requirements. They only measure general attributes of the code that are applicable to any project like source lines of code and cyclomatic complexity.
+
+Code coverage plug-in:
+The org.eclipse.photran.core.vpg.tests project covers 76.5% of the ExtractLocalVariableRefactoring class.
+
+New ExtractLocalVariableRefactoring tests:
+
+1. In the extract-local-variable/test5-string-concat-exp directory, we test the extract local variable refactoring on a more complicated expression in which several strings are concatenated together. The test is expected to pass.
+
+2. In the extract-local-variable/test6-function-scope directory, we extract a local variable in an expression in the scope of a function instead of in the main program’s scope. This test is expected to pass.
+
+3. In the extract-local-variable/test7-fail-empty-decl directory, the following extraction is specified: !<<<<< 9, 14, 9, 31, , fail-final. The blank value between commas suggests an empty declaration for the extracted variable. We expect the refactoring to fail in lines 145-146 of ExtractLocalVariableRefactoring shown below:
+
+if (this.decl.trim().equals("")) //$NON-NLS-1$
+           fail(Messages.ExtractLocalVariableRefactoring_EnterDeclarationForExtractedVar);
+
+Since EclEmma did not show this line as covered even after introducing this test, we used the debugger to verify that this fail() is indeed executed as expected.
+
+4. In the extract-local-variable/test8-fail-init-in-decl directory, we specify the following local variable extraction: !<<<<< 9, 14, 9, 31, integer :: x = 3, fail-final. Since the local variable declaration contains an initialization, we expect the refactoring to fail at lines 160-161 of ExtractLocalVariableRefactoring:
+
+if (declToInsert.getEntityDeclList().get(0).getInitialization() != null)    fail(Messages.ExtractLocalVariableRefactoring_DeclarationMustNotContainInitialization);
+
+Again, EclEmma did not show these lines as covered, so we verified again that this test covers these lines as expected.

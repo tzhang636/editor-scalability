@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+<!-- =========================== -->
+<!-- Nature for Fortran Projects -->
+<!-- =========================== -->
+   <extension
+         id="fnature"
+         name="%fnature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.photran.internal.core.FProjectNature">
+         </run>
+      </runtime>
+   </extension>
+
+<!-- =====================================-->
+<!-- Fortran Content Type/File Extensions -->
+<!-- =====================================-->
+  <extension point="org.eclipse.core.contenttype.contentTypes">
+
+	  <content-type id="fortranSource" name="%content-type.name"
+		  base-type="org.eclipse.core.runtime.text"/>
+
+      <!-- Associated filename extensions -->
+      <!-- NOTE: These extensions are duplicated in the following files...
+                 org.eclipse.photran.managedbuilder.intel.ui/plugin.xml
+                 org.eclipse.photran.managedbuilder.gnu.ui/plugin.xml
+                 org.eclipse.photran.managedbuilder.xlf.ui/plugin.xml
+                 org.eclipse.photran.core/plugin.xml
+          ...as well as in the source-form contributions in
+                 org.eclipse.photran.core/plugin.xml   (this file)
+                 org.eclipse.photran.core.vpg/plugin.xml
+                 org.eclipse.photran.core.vpg.preprocessor.c/plugin.xml
+          If you change them here, change them in the other places as well.-->
+	  <file-association 
+          content-type="org.eclipse.photran.core.fortranSource"
+          file-extensions="f90,f95,f03,f08,F90,F95,F03,F08,f,for,ftn,fix,f77,fpp,F,FOR,FTN,FIX,F77,FPP"/>
+
+  </extension>
+
+<!-- =========================== -->
+<!-- Source Form Extension Point -->
+<!-- =========================== -->
+
+  <extension-point id="sourceForms" name="%extension-point.name" schema="schema/sourceForms.exsd"/>
+
+</plugin>

@@ -1,0 +1,55 @@
+=========================================
+Part 1 - Metrics and Code Coverage
+=========================================
+
+===== Metrics =====
+
+Nested block depth
+- Max 12
+- /org.eclipse.photran.cdtinterface/.../CApplicationLaunchShortcut.java : SearchAndLaunch
+- The maximum number of nested blocks within a method. Such blocks include if, while, for, anonymous classes etc. 
+- Heavily nested code blocks makes the code hard to read and maintain. Variable scoping is also difficult to handle in this situation. 
+- Extract method from the heavily nested blocks can help reduce the nesting into logical parts. Actual benefit of this depends on whether there are logical units inside the blocks. 
+- Extract class to have these functionalities be shared among several classes might be helpful in some cases, especially when the data type is frequently used. 
+- Both refactorings above are actually helpful in the case of SearchAndLaunch. There are anonymous classes in the method and extracting them out would be helpful. There are also some type checking (instanceof) code and null checking code. These can be extracted into a method with early returns to check for those conditions. 
+
+MacCabe Cyclomatic complexity
+- Max 27
+- /org.eclipse.photran.cdtinterface/.../OldGFortranErrorParser.java : processLine
+- The number of ‘linear” segments in a method (i.e. sections of code with no branches). A method with no branches has a Cyclomatic Complexity of 1. This number is incremented whenever a branch is encountered.
+- A method with high cyclomatic complexity (i.e. greater than 10) are hard to test and error prone. In addition, they make the code hard to understand, change, maintain and reuse.
+- To reduce the cyclomatic complexity we could simply refactor the method such that it calls various helper methods that would replace the branches. 
+- The refactoring is not really necessary here since the second branch (i.e. the massive else if branch) contains multiple branches that actually make use of the same variables defined within that branch. This means that in order to refactor we would have to pass these variables to each helper method, resulting in unnecessary duplication. In addition, since the branches depend upon each other, separating them would cause the code to become more convoluted.
+
+Number of parameters
+- Max 6
+- /org.eclipse.photran.cdtinterface/.../DefaultFortranDependencyCalculator.java : FindModulesInResources
+- The number of parameters for a particular method. 
+- Methods with a large number of parameters often indicate that classes are missing from the model, and that individual methods are trying to do too much. These methods are often hard to use and maintain since it is difficult to remember all of the parameters. In addition, they are generally less modular than they should be leading to low reusability.
+- A potential solution to this is to create classes that binds frequently appearing data together. 
+- This refactoring is actually not necessary here since the parameters are result accumulators for the recursive private helper method. The parameter types do not frequently appear together and only last for a short time. Leaving the parameters as it is is actually acceptable. 
+
+
+===== Code coverage =====
+
+Coverage for org.eclipse.photran.internal.core.refactoring.ExtractLocalVariableRefactoring : 76.5%
+
+
+
+
+
+=========================================
+Part 2 - Testing "Extract Local Variable" Refactoring
+=========================================
+
+--- Test 5 ---
+Tests the use of a “use” statement that refers to another module. Covered line 267 for the use of ASTUseStmtNode
+
+--- Test 6 ---
+Test 6 is an edge case of the Fortran language. It splits a variable name across multiple lines and perform variable extraction on it. The test failed where it should not have. The code compiles successfully in gfortran. 
+
+--- Test 7 ---
+Test for an empty refactor variable name. Expected to fail. Covered line 146. 
+
+--- Test 8 ---
+Tests the case where selection is not fully covered by one AST node. Specifically it selects `*5` and try to extract it. Expected to fail. Covered line 104. 
